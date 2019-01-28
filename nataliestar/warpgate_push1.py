@@ -9,6 +9,8 @@ from sc2.ids.unit_typeid import UnitTypeId
 
 class WarpGateBot(sc2.BotAI):
 
+
+
     # async def intel(self):
     #
     #     game_data = np.zeros((self.game_info.map_ .map_si [1], self.game_info.map_center[0], 3), np.float64)
@@ -72,14 +74,19 @@ class WarpGateBot(sc2.BotAI):
         if self.units(UnitTypeId.PYLON).ready.exists:
             proxy = self.units(UnitTypeId.PYLON).closest_to(self.enemy_start_locations[0])
             pylon = self.units(UnitTypeId.PYLON).ready.random
-            if self.units(UnitTypeId.GATEWAY).ready.exists:
-                if not self.units(UnitTypeId.CYBERNETICSCORE).exists:
-                    if self.can_afford(UnitTypeId.CYBERNETICSCORE) and not self.already_pending(UnitTypeId.CYBERNETICSCORE):
-                        await self.build(UnitTypeId.CYBERNETICSCORE, near=pylon)
+            # if self.units(UnitTypeId.GATEWAY).ready.exists:
+            if not self.units(UnitTypeId.CYBERNETICSCORE).exists:
+                if self.can_afford(UnitTypeId.CYBERNETICSCORE) and not self.already_pending(UnitTypeId.CYBERNETICSCORE):
+                    self.GATEWAY_IS_BUILDING = False
+                    await self.build(UnitTypeId.CYBERNETICSCORE, near=pylon)
             # if self.can_afford(UnitTypeId.GATEWAY) and self.units(UnitTypeId.WARPGATE).amount < 4 and self.units(UnitTypeId.GATEWAY).amount < 4:
+            # if self.units(UnitTypeId.CYBERNETICSCORE).exists and self.can_afford(UnitTypeId.GATEWAY) and self.units(
+            #             UnitTypeId.GATEWAY).amount < 7:
+            #         await self.build(UnitTypeId.GATEWAY, near=pylon)
             if self.can_afford(UnitTypeId.GATEWAY) and self.units(
-                        UnitTypeId.GATEWAY).amount < 7:
-                    await self.build(UnitTypeId.GATEWAY, near=pylon)
+                    UnitTypeId.GATEWAY).amount < 7:
+                await self.build(UnitTypeId.GATEWAY, near=pylon)
+
 
         for nexus in self.units(UnitTypeId.NEXUS).ready:
             vgs = self.state.vespene_geyser.closer_than(20.0, nexus)
@@ -140,7 +147,7 @@ def main():
     sc2.run_game(sc2.maps.get("(2)CatalystLE"), [
         Bot(Race.Protoss, WarpGateBot()),
         Computer(Race.Protoss, Difficulty.Hard)
-    ], realtime=True)
+    ], realtime=False)
 
 if __name__ == '__main__':
     main()
